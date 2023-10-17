@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use Log;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
 {
@@ -18,7 +20,7 @@ class PostController extends Controller
             return strtotime($b['created_at']) - strtotime($a['created_at']);
         });
         
-        return view('index', [
+        return view('posts.index', [
             'data' => $data
         ]);
     }
@@ -28,7 +30,7 @@ class PostController extends Controller
      */
     public function create()
     {
-        //
+        return view('posts.create');
     }
 
     /**
@@ -36,7 +38,23 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validatedData = $request->validate([
+            'content'=> 'required',
+            'image' => 'required|file|image',
+        ]);
+
+        if($request->file('image')){
+            $validatedData['image'] = $request->file('image')->store('/image/posts');
+        }
+
+        $postAttributes = [
+            'posts_content' => $validatedData['content'],
+            'image' => $validatedData['image'],
+        ];
+
+        $token = $request->session()->get('token');
+        $response = Http::withToken($token)->post('http://127.0.0.1:9000/api/posts', $postAttributes);
+        return redirect('/')->with('succes', 'New post has been added!');
     }
 
     /**
@@ -46,7 +64,7 @@ class PostController extends Controller
     {
         $response = Http::get('http://127.0.0.1:9000/api/posts/'.$id);
         $data = $response->json()['data'];
-        return view('post', compact('data'));
+        return view('posts.post', compact('data'));
     }
 
     /**
@@ -54,7 +72,10 @@ class PostController extends Controller
      */
     public function edit(string $id)
     {
-        //
+
+        $response = Http::get('http://127.0.0.1:9000/api/posts/'.$id);
+        $data = $response->json()['data'];
+        return view('posts.edit', compact('data'));
     }
 
     /**
@@ -62,14 +83,39 @@ class PostController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $validated = $request->validate([
+            'content'=> 'required',
+        ]);
+
+        if($request->file('image')){
+            if($request->oldImage){
+                Storage::delete($request->oldImage);
+            }
+            $validated['image'] = $request->file('image')->store('image/posts');
+        }
+        else{
+            $validated['image'] = $request->oldImage;
+        }
+        
+        $token = $request->session()->get('token');
+        $response = Http::withToken($token)->patch('http://127.0.0.1:9000/api/posts/'.$id, $validated);
+        // Check the response status and handle errors
+        if ($response->successful()) {
+            // Request was successful, process the response data
+            $responseData = $response->json();
+        } else {
+            // Request failed, print the error message
+            dd('API request failed: ' . $response->status());
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Request $request, string $id)
     {
-        //
+        $token = $request->session()->get('token');
+        $response = Http::withToken($token)->delete('http://127.0.0.1:9000/api/posts/'.$id);
+        return redirect('/')->with('succes', 'Post has been deleted!');
     }
 }

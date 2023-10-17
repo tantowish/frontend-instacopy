@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\AccountController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\AuthenticationController;
 
 /*
@@ -16,8 +18,19 @@ use App\Http\Controllers\AuthenticationController;
 */
 
 
+// Routing posts
 Route::get('/',[PostController::class, 'index']);
 Route::resource('posts',PostController::class);
+Route::patch('/posts/{id}',[PostController::class, 'update']);
 
+// Routing Account & Auth
 Route::get('/login',[AuthenticationController::class, 'login']);
-Route::get('/login/store',[AuthenticationController::class, 'store']);
+Route::post('/login/auth',[AuthenticationController::class, 'auth']);
+Route::post('/logout',[AuthenticationController::class, 'logout']);
+Route::get('/register',[AccountController::class, 'register']);
+Route::post('/register/store',[AccountController::class, 'store']);
+Route::get('/profile', [AccountController::class, 'profile']);
+
+// Routing Comments
+Route::get('/comments/create/{id}',[CommentController::class, 'create']);
+

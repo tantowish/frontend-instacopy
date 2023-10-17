@@ -5,9 +5,36 @@
         <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white"><Span class="text-pink-500">Insta</Span>Copy</span>
     </a>
     <div class="flex md:order-2">
-        <a href="\login">
-            <button type="button" class="text-white bg-pink-500 hover:bg-pink-600 focus:ring-4 focus:outline-none focus:ring-pink-300 font-medium rounded-lg text-sm px-4 py-2 text-center mr-3 md:mr-0 dark:bg-pink-600 dark:hover:bg-pink-500 dark:focus:ring-pink-800">Login</button>
+      @if (session('token'))
+      <button id="dropdownUserAvatarButton" data-dropdown-toggle="dropdownAvatar" class="flex mx-3 text-sm bg-gray-800 rounded-full md:mr-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600" type="button">
+        <span class="sr-only">Open user menu</span>
+        <img class="w-8 h-8 rounded-full" src="{{ session('data')['image'] ? asset('storage/' . session('data')['image']) : asset('storage/image/users/default.jpg') }}" alt="user photo">
+      </button>
+
+      <!-- Dropdown menu -->
+      <div id="dropdownAvatar" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600">
+        <div class="px-4 py-3 text-sm text-gray-900 dark:text-white">
+          <div>{{ session('data')['username'] }}</div>
+          <div class="font-medium truncate">{{ session('data')['email'] }}</div>
+        </div>
+        <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownUserAvatarButton">
+          <li>
+            <a href="/profile" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Profile</a>
+          </li>
+        </ul>
+        <div class="py-2">
+          <form action="/logout" method="POST">
+            @csrf
+            <button class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white" type="submit">Sign Out</button>
+          </form>
+        </div>
+      </div>
+      @else
+        <a href="/login">
+          <button type="button" class="text-white bg-pink-500 hover:bg-pink-600 focus:ring-4 focus:outline-none focus:ring-pink-300 font-medium rounded-lg text-sm px-4 py-2 text-center mr-3 md:mr-0 dark:bg-pink-600 dark:hover:bg-pink-500 dark:focus:ring-pink-800">Login</button>
         </a>
+      @endif
+        
     
         <button data-collapse-toggle="navbar-sticky" type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="navbar-sticky" aria-expanded="false">
           <span class="sr-only">Open main menu</span>
