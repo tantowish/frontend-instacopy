@@ -21,7 +21,7 @@ use App\Http\Controllers\AuthenticationController;
 // Routing posts
 Route::get('/',[PostController::class, 'index']);
 Route::resource('posts',PostController::class);
-Route::patch('/posts/{id}',[PostController::class, 'update']);
+// Route::patch('/posts/{id}',[PostController::class, 'update'])->name('posts.update');
 
 // Routing Account & Auth
 Route::get('/login',[AuthenticationController::class, 'login']);

@@ -8,6 +8,7 @@
             </a>
             <a href="/user/{{ $data['author']['id'] }}" class="font-semibold">{{ $data['author']['username'] }}</a>
             <p class="text-sm text-slate-500">{{ \Carbon\Carbon::parse($data['created_at'])->diffForHumans() }}</p>
+            @if (session('token'))
             @if (session('data')['id'] == $data['author']['id'])
             <div class="ml-auto flex flex-wrap">
                 <a class="" href="/posts/{{ $data['id'] }}/edit">
@@ -22,6 +23,7 @@
                     </button>
                 </form>  
             </div> 
+            @endif
             @endif
         </div>
         <div class="flex flex-col items-center bg-white dark:border-gray-700 dark:bg-gray-800">

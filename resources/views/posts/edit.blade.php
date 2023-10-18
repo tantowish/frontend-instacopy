@@ -4,7 +4,7 @@
 <div class="max-w-lg mx-auto">
     <h1 class="mb-8 text-2xl font-bold text-pink-500 text-center">Login</h1>
     <form action="/posts/{{ $data['id'] }}" method="POST" enctype="multipart/form-data">
-        @method("PATCH")
+        @method('PATCH')
         @csrf
         <div class="mb-6">
           <label for="content" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Caption</label>

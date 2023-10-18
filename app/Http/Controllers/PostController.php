@@ -96,16 +96,18 @@ class PostController extends Controller
         else{
             $validated['image'] = $request->oldImage;
         }
-        
+        // dd($validated);
         $token = $request->session()->get('token');
         $response = Http::withToken($token)->patch('http://127.0.0.1:9000/api/posts/'.$id, $validated);
+        dd($response);
         // Check the response status and handle errors
         if ($response->successful()) {
             // Request was successful, process the response data
             $responseData = $response->json();
+
         } else {
             // Request failed, print the error message
-            dd('API request failed: ' . $response->status());
+            dd($response);
         }
     }
 
